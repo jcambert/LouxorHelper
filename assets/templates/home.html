@@ -1,0 +1,11 @@
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="row">
+        <div class="jumbotron">
+            <div class="container">
+                <h1>Bonjour <p ng-show="$root.user.isLogged">{{$root.user.firstname}}  {{$root.user.lastname}} </p></h1>
+                <p>Ceci est l'interface de saisie pour réaliser un inventaire sous Louxor</p>
+                <p ng-show="$root.user.isLogged"><a class="btn btn-primary btn-lg" ui-sref="home.inventaire"  role="button">Cela se passe ici !!</a></p>
+                <p ng-hide="$root.user.isLogged"><a class="btn btn-primary btn-lg" ui-sref="signin"  role="button">Veuillez déja vous identifier</a></p>
+            </div>
+        </div>
+    </div>

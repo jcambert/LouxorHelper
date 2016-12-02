@@ -1,0 +1,81 @@
+<div class="container" >
+    <div class="row main">
+        <div class="panel-heading">
+            <div class="panel-title text-center">
+                <h1 class="title">ATF Industrie</h1>
+                <hr />
+            </div>
+        </div> 
+        <div class="main-login main-center">
+            <form class="form-horizontal" ng-submit="trySignup()" name="signupForm" novalidate>
+                
+                <div class="form-group">
+                    <label for="name" class="cols-sm-2 control-label">Nom</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
+                            <input type="text" class="form-control" name="firstname" id="firstname"  placeholder="Votre nom" ng-model="user.firstname" ng-required="true" ng-minlength="6"/>
+                        </div>
+                        <span class="msg-error" ng-show="signupForm.firstname.$error.required">Indiquer votre nom.</span>
+                        <span class="msg-error" ng-show="signupForm.firstname.$error.minlength">Le nom doit avoir 6 caracteres minimum.</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="name" class="cols-sm-2 control-label">Votre prénom</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
+                            <input type="text" class="form-control" name="lastname" id="lastname"  placeholder="Votre prénom" ng-required="true" ng-model="user.lastname"/>
+                        </div>
+                       <span class="msg-error" ng-show="signupForm.lastname.$error.required ">Indiquer votre prénom.</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="cols-sm-2 control-label">Votre Email</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-envelope fa" aria-hidden="true"></i></span>
+                            <input type="email" class="form-control" name="email" id="email"  placeholder="Votre email" ng-required="true" ng-model="user.email"/>
+                        </div>
+                        <span class="msg-error" ng-show="signupForm.email.$error.required">Indiquer votre email.</span>
+                        <span class="msg-error" ng-show="signupForm.email.$error.email">Email mal formé</span>
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="password" class="cols-sm-2 control-label">Mot de passe</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                            <input type="password" class="form-control" name="password" id="password"  placeholder="Votre mot de passe" ng-required="true" ng-minlength="6" ng-model="password"/>
+                        </div>
+                        <span class="msg-error" ng-show="signupForm.password.$error.required">Indiquer votre mot de passe.</span>
+                         <span class="msg-error" ng-show="signupForm.password.$error.minlength">Le nom doit avoir 6 caracteres minimum.</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm" class="cols-sm-2 control-label">Confirmer le mot de passe</label>
+                    <div class="cols-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                            <input type="password" class="form-control" name="pw2" id="pw2"  placeholder="Confirmer le mot de passe"  ng-model="pw2" pw-check="password"/>
+                            
+                        </div>
+                        <span class="msg-error" ng-show="signupForm.pw2.$error.pwmatch"> Les mots de passe ne correspondent pas</span>
+                    </div>
+                </div>
+
+                <div class="form-group ">
+                    <button type="submit" class="btn btn-primary btn-lg btn-block login-button" ng-disabled ="!signupForm.$valid">Enregistrez-vous</button>
+                </div>
+                <div class="login-register">
+                    <a ui-sref="signin">Entrer</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>

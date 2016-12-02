@@ -1,0 +1,23 @@
+/* Durée de l'animation */
+[ui-view].ng-enter, [ui-view].ng-leave {
+  transition-duration: 1s; }
+
+/* Au démarage */
+[ui-view].ng-enter {
+  opacity: 0;
+  transform: translateX(20px); }
+
+/* Fin de l'animation d'entrée */
+[ui-view]ng-enter.ng-enter-active {
+  opacity: 1;
+  transform: translateX(0px); }
+
+/* Fin de l'animation de sortie */
+[ui-view].ng-leave.ng-leave-active {
+  opacity: 0;
+  transform: translateX(-20px); 
+}
+.has-navbar-top{
+    top:50px;
+    position: fixed;
+}
