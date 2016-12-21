@@ -19,7 +19,7 @@
  * For more information on configuring custom routes, check out:
  * http://sailsjs.org/#!/documentation/concepts/Routes/RouteTargetSyntax.html
  */
-
+var _ = require('lodash');
 module.exports.routes = {
 
   /***************************************************************************
@@ -33,7 +33,10 @@ module.exports.routes = {
   ***************************************************************************/
 
   '/': {
-    view: 'homepage'
+    view: 'homepage',
+    locals:{
+      title:'Louxor Helper v0.1'
+    }
   },
 
   
@@ -50,16 +53,38 @@ module.exports.routes = {
   
   'get /login': {
        view: 'login'
+},
+
+  'get /welcome':function(req,res){
+    if(!req.isSocket)
+      return res.badRequest();
+
+    sails.sockets.join(req,sails.config.sockets.roomName,
+      function(err){
+        if(err) return res.serverError(err);
+
+        /*_.forEach(sails.models,function(model){
+          model.subscribe(req);
+        })*/
+        return res.json({message:'Bienvenue sur '+sails.config.sockets.roomName,roomName:sails.config.sockets.roomName});
+      })
   },
+//  'post /login': 'AuthController.login',
+ // 'get /islogin': 'AuthController.islogin',
 
-  'post /login': 'AuthController.login',
-  'get /islogin': 'AuthController.islogin',
-
-  '/logout': 'AuthController.logout',
+ // '/logout': 'AuthController.logout',
 
 /*  'get /signup': {
     view: 'signup'
   },*/
 
-  'GET /inventaire/detail':'Inventaire.detail'
+  'GET /inventaire/inject/:id/start':'InventaireController.start',
+  'GET /inventaire/inject/:id/wantstart':'InventaireController.wantstart',
+  'GET /inventaire/inject/:id/end' : 'InventaireController.end',
+  'GET /inventaire/inject/:id/error' :'InventaireController.error',
+  'GET /inventaire/inject/:id/clear' :'InventaireController.clearstatus',
+  'GET /inventaire/detail':'InventaireController.detail',
+  'GET /inventaire/list':'InventaireController.list',
+  'GET /articleinventaire/byref/:reference':'ArticleInventaireController.byreferences',
+  
 };

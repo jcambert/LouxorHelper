@@ -1,0 +1,82 @@
+
+<div class="container">
+    <div class="row main">
+        <div class="panel-heading">
+            <div class="panel-title text-center">
+                <h1 class="title">Liste des roles</h1>
+                <hr />
+            </div>
+        </div> 
+        <div class="col-md-4">
+            <label class="control-label">Montrer les roles non actifs</label>
+            <uib-toggle ng-model="showNonActive" on-change="onChange(value)"> </uib-toggle>
+        </div>
+         <div class="col-md-4 col-offset-4">
+           <button type="button" class="btn btn-default" uib-tooltip="Ajouter un role" ng-click="addNew()"   faa="shake"><i class="fa fa-plus "></i></button>
+        </div>
+        <div class="col-md-12">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Statut</th>
+                        <th>Utilisateurs</th>
+                        <th>Permissions</th>
+                        <th>Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="item in items track by $index"> 
+                        <td>
+                            <span class="label label-primary label-as-badge" ng-show="item.active">Actif</span>
+                            <span class="label label-danger  label-as-badge" ng-show="!item.active">Non actif</span>&nbsp;
+                        </td>
+                        <td>
+                            <span class="label label-success label-as-badge" ng-bind="item.users.length"></span>
+                        </td>
+                        <td>
+                            <span class="label label-success label-as-badge" ng-bind="item.permissions.length"></span>
+                             <div class="btn-group">
+                                <label class="btn btn-success" ng-model="radioModel" uib-btn-checkbox><fa icon="plus"/></label>
+                                <label class="btn btn-success" ng-model="radioModel" uib-btn-checkbox ><fa icon="eye"/></label>
+                                <label class="btn btn-success" ng-model="radioModel" uib-btn-checkbox><fa icon="pencil"/></label>
+                                <label class="btn btn-success" ng-model="radioModel" uib-btn-checkbox><fa icon="trash"/></label>
+                            </div>
+                        </td>
+                        <td ng-bind="item.name">
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger" uib-tooltip="Rendre inactif {{item.name}}" ng-show="item.active" faa="pulse" ng-click="setActiveTo($index,false)"><i class="fa fa-archive "></i></button>
+                            <button type="button" class="btn btn-success" uib-tooltip="Rendre actif {{item.name}}"  ng-hide="item.active" faa="pulse" ng-click="setActiveTo($index,true)"><i class="fa fa-archive "></i></button>
+                            <button type="button" class="btn btn-primary" uib-tooltip="Editer {{item.name}}"  faa="shake" ui-sref="home.administration.editrole({id:item.id})"><i class="fa fa-pencil"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+           
+        </div>
+    </div>
+</div>
+<script type="text/ng-template" id="admin.role.add.html">
+    <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Ajouter un role</h3>
+    </div>
+    <form  name="frm" novalidate >
+        <div class="modal-body" id="modal-body">
+            <div class="form-group" >
+                    <label for="role" class="control-label">Role</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-film" aria-hidden="true"></i></span>
+                        <input type="text" name="role" id="role"  ng-disabled="mode=='modify'" ng-model="role.name" ng-required="true"  placeholder="Nouveau Role" uib-tooltip="Saisissez un nom pour le role"   class="form-control">
+                    </div>
+                    <div class="msg-error" ng-show="noResults">
+                        <span class="msg-error" ng-show="frm.role.$error.required">Nom du role obligatoire</span>
+                    </div>
+                </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok(role)" ng-disabled ="!frm.$valid" faa="shake" ><fa icon="check"/></i></button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()" faa="pulse"><i class="fa fa-sign-out"></i></button>
+        </div>
+    </form>
+</script>

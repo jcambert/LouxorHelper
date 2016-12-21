@@ -1,3 +1,4 @@
+
 /* Durée de l'animation */
 [ui-view].ng-enter, [ui-view].ng-leave {
   transition-duration: 1s; }
@@ -18,6 +19,31 @@
   transform: translateX(-20px); 
 }
 .has-navbar-top{
-    top:50px;
-    position: fixed;
+    top:@navbar-height;
+   // position: fixed;
+   position: relative;
+}
+.container-fluid{
+  width:100%;
+}
+.user-name{
+  color:@navbar-inverse-color;
+  float: left;
+  padding: @navbar-padding-vertical @navbar-padding-horizontal;
+  font-size: @font-size-large;
+  line-height: @line-height-computed;
+  height: @navbar-height;
+}
+.navbar-brand{
+  img{
+     position:relative;
+     top:-15px;
+     left: -15px;
+    
+    
+    height: @navbar-height;
+  }
+}
+.label-as-badge {
+    border-radius: 1em;
 }

@@ -138,4 +138,5 @@ module.exports.sockets = {
   ***************************************************************************/
   // transports: ["polling", "websocket"]
 
+  roomName:'AtfRoom'
 };

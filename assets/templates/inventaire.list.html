@@ -1,0 +1,43 @@
+
+<div class="container">
+    <div class="row main">
+        <div class="panel-heading">
+            <div class="panel-title text-center">
+                <h1 class="title">Liste des inventaires</h1>
+                <hr />
+            </div>
+        </div> 
+        <div class="col-md-4">
+            <label class="control-label">Montrer Inventaires soldés</label>
+            <uib-toggle ng-model="showSolde" on-change="onChange(value)"> </uib-toggle>
+        </div>
+        <div class="col-md-12">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="inventaire in inventaires |  orderBy:'date'   track by $index">
+                        <td> {{inventaire.date}} <span class="badge" ng-bind="inventaire.status"></span><span class="badge danger" ng-show="inventaire.solde">Soldé</span></td>
+                        <td>
+                            <div class="btn-group" role="group" aria-label="..." ng-show="canModify($index)">
+                                <button type="button" class="btn btn-default" uib-tooltip="Saisir l'inventaire du {{inventaire.date}}'" ui-sref="home.inventaire.saisie({id:inventaire.id})" faa="pulse"><i class="fa fa-pencil "></i></button>
+                                <button type="button" class="btn btn-default" uib-tooltip="Détail de l'inventaire du {{inventaire.date}}'" ui-sref="home.inventaire.detail({id:inventaire.id})" faa="shake"><i class="fa fa-list"></i></button>
+                                <button type="button" class="btn btn-default" uib-tooltip="Recap de l'inventaire du {{inventaire.date}}'" ui-sref="home.inventaire.recap({id:inventaire.id})" faa="tada"><i class="fa fa-feed "></i></button>
+                                <button type="button" class="btn btn-warning" uib-tooltip="Solder l'inventaire du {{inventaire.date}}'" ng-click="sold(inventaire.id)" faa="horizontal"><i class="fa fa-cloud"></i></button>
+                                <button type="button" class="btn btn-danger" uib-tooltip="Supprimer l'inventaire du {{inventaire.date}}" ng-click="delete(inventaire.id)" faa="flash"><i class="fa fa-trash"></i></button>
+                            </div>
+                            <button type="button" class="btn btn-success" uib-tooltip="Solder l'inventaire du {{inventaire.date}}" ng-click="solde($index)" faa="flash" ng-show="canSolde($index)"><i class="fa fa-archive "></i></button>
+                            <button type="button" class="btn btn-success" uib-tooltip="Injecter l'inventaire du {{inventaire.date}}" ng-click="inject($index)" faa="spin" ng-show="canInject($index)"><i class="fa fa-spinner "></i></button>
+                            
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+           
+        </div>
+    </div>
+</div>

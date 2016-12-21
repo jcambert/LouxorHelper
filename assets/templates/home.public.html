@@ -1,0 +1,12 @@
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="row">
+        <div class="jumbotron">
+            <div class="container">
+                <h1>Bonjour <p ng-show="$root.isLogged">{{$root.user.username}} </p></h1>
+                <p>Ceci est l'interface d'aide à la gestion de Louxor</p>
+                <p ng-show="$root.isLogged"><a class="btn btn-primary btn-lg" ui-sref="home.signed"  role="button">Cela se passe ici !!</a></p>
+                <p ng-show="!$root.isLogged && $root.socketState=='connected'"><a class="btn btn-primary btn-lg" ui-sref="home.signin"  role="button">Veuillez déja vous identifier</a></p>
+                <p ng-bind="$root.message"></p>
+            </div>
+        </div>
+    </div>

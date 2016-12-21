@@ -1,0 +1,60 @@
+<div class="container">
+    <div class="row main">
+        <div class="panel-heading">
+            <div class="panel-title text-center">
+                <h1 class="title">Modifier l'inventaire du {{inventaire.date}}</h1>
+                <hr />
+            </div>
+        </div> 
+
+        <div class="main-login main-center" >
+             <span ng-show="loading">
+                <i class="fa fa-spinner fa-spin fa-5x"></i>
+            </span>
+            <form  name="frm" novalidate ng-hide="loading">
+                <div class="form-group" >
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-default" uib-tooltip="Recap de l'inventaire du {{inventaire.date}}'" ui-sref="home.inventaire.recap({id:inventaire.id})"><span class="fa fa-feed"></span></button>
+                        <button type="button" class="btn btn-default" uib-tooltip="Saisir l'inventaire du {{inventaire.date}}" ui-sref="home.inventaire.saisie({id:inventaire.id})"><span class="fa fa-pencil"></span></button>
+                        <item-per-page-dropdown steps="[3,5,10,20,30,40,50]" items-per-page="itemsPerPage" total-items="filterItemsCount" uib-tooltip="{{filterItemsCount}} articles"></item-per-page-dropdown>
+
+                    </div>
+                    <div class="col-md-3 ">
+                        <search-field search="search" filter-items-count="filterItemsCount"></search-field>
+                    </div>
+                </div>
+                <div class="form-group" >
+                    <div class="col-md-12">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Article</th>
+                                    <th>Quantite</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="article in filtered = inventaire.articles | filter:search | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage  track by $index">
+                                    <td>{{article.codart}}</td>
+                                    <td>{{article.qty}}</td>
+                                    <td>
+                                        <div class="btn-group" role="group" aria-label="...">
+                                            <button type="button" class="btn btn-default" uib-tooltip="Modifier {{article.codart}} de l'inventaire du {{inventaire.date}}'" ui-sref="home.inventaire.modifier({id:inventaire.id,aid:article.id})"><span class="fa fa-pencil"></span></button>
+                                            <button type="button" class="btn btn-default" uib-tooltip="Supprimer {{article.codart}} de l'inventaire du {{inventaire.date}}" ng-click="delete(article.id,$index)"><span class="fa fa-trash"></span></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <pager table-model="inventaire.articles" filtered="filtered" search="search" items-per-Page="itemsPerPage" current-page="currentPage" total-items="filterItemsCount"></pager>
+                </div>
+                
+            </form>
+        </div>
+    </div>
+</div>
+

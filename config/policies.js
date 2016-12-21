@@ -26,9 +26,12 @@ module.exports.policies = {
   *                                                                          *
   ***************************************************************************/
 
-   '*': true,
-   'ArticleController':{'*' : 'isAuthenticated'},
-   'InventaireController':{'*' : 'isAuthenticated'}
+   //'*': true,
+   //'ArticleInventaireController':{'*' : 'isAuthenticated'},
+   //'InventaireController':{'*' : 'isAuthenticated'}
+   
+
+
   /***************************************************************************
   *                                                                          *
   * Here's an example of mapping some policies to run before a controller    *

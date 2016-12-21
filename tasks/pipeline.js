@@ -31,9 +31,12 @@ var jsFilesToInject = [
   // Dependencies like jQuery, or Angular are brought in here
   'js/dependencies/dist/jquery.js',
   'js/dependencies/angular.js',
+  'js/dependencies/angular-locale_fr-fr.js',
   'js/dependencies/release/angular-ui-router.js',
+
   'js/dependencies/ui-bootstrap-tpls.js',
   'js/dependencies/dist/js/bootstrap.js',
+  'js/dependencies/moment.js',
   'js/dependencies/**/*.js',
 
   // All of the rest of your client-side js files

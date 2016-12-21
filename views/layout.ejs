@@ -27,14 +27,15 @@
             + Import stylesheets from other directories
             + Use a different or additional preprocessor, like SASS, SCSS or Stylus
     -->
-
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
     <!--STYLES-->
+    <link rel="stylesheet" href="/styles/css/bootstrap-toggle.min.css">
     <link rel="stylesheet" href="/styles/dist/angular-toastr.css">
     <link rel="stylesheet" href="/styles/importer.css">
     <!--STYLES END-->
   </head>
 
-  <body ng-app="inventaireatf" ng-controller="MainCtrl">
+  <body ng-app="inventaireatf">
       
     <%- body %>
 
@@ -93,15 +94,22 @@
     <script src="/js/dependencies/sails.io.js"></script>
     <script src="/js/dependencies/dist/jquery.js"></script>
     <script src="/js/dependencies/angular.js"></script>
+    <script src="/js/dependencies/angular-locale_fr-fr.js"></script>
     <script src="/js/dependencies/release/angular-ui-router.js"></script>
     <script src="/js/dependencies/ui-bootstrap-tpls.js"></script>
     <script src="/js/dependencies/dist/js/bootstrap.js"></script>
+    <script src="/js/dependencies/moment.js"></script>
     <script src="/js/dependencies/angular-animate.js"></script>
+    <script src="/js/dependencies/angular-moment.js"></script>
     <script src="/js/dependencies/dist/angular-toastr.tpls.js"></script>
     <script src="/js/dependencies/dist/sails.io.js"></script>
     <script src="/js/dependencies/index.js"></script>
+    <script src="/js/dependencies/js/bootstrap-toggle.min.js"></script>
+    <script src="/js/dependencies/lodash.js"></script>
+    <script src="/js/dependencies/ngStorage.js"></script>
     <script src="/js/dependencies/src/sailsResource.js"></script>
     <script src="/js/public/app.js"></script>
+    <script src="/js/public/spinner.js"></script>
     <!--SCRIPTS END-->
   </body>
 </html>

@@ -22,8 +22,8 @@ module.exports.http = {
   ****************************************************************************/
 
   middleware: {
-    passportInit    : require('passport').initialize(),
-    passportSession : require('passport').session(),
+    //passportInit    : require('passport').initialize(),
+    //passportSession : require('passport').session(),
   /***************************************************************************
   *                                                                          *
   * The order in which middleware should be run for HTTP request. (the Sails *
@@ -35,8 +35,8 @@ module.exports.http = {
        'startRequestTimer',
        'cookieParser',
        'session',
-       'passportInit',
-       'passportSession',
+       //'passportInit',
+       //'passportSession',
        'myRequestLogger',
        'bodyParser',
        'handleBodyParserError',
@@ -59,6 +59,7 @@ module.exports.http = {
 
      myRequestLogger: function (req, res, next) {
          console.log("Requested :: ", req.method, req.url);
+         console.dir(sails.config.routes);
          return next();
      },
 

@@ -1,0 +1,56 @@
+<div class="container">
+    <div class="row main">
+        <div class="panel-heading">
+            <div class="panel-title text-center">
+                <h1 class="title">Edition de l'utilisateur <p ng-bind="user.username"></p> </h1>
+                <hr />
+            </div>
+        </div> 
+
+        <div class="main-login main-center" >
+             <span ng-show="loading">
+                <i class="fa fa-spinner fa-spin fa-5x"></i>
+            </span>
+            <form ng-submit="saisirInventaire()" name="frm" novalidate ng-hide="loading">
+                <div class="form-group ">
+                    <button type="button" class="btn btn-default" uib-tooltip="Détail de l'inventaire du {{inventaire.date}}'" ui-sref="home.inventaire.detail({id:inventaire.id})"><span class="fa fa-list"></span></button>
+                    <button type="button" class="btn btn-default" uib-tooltip="Recap de l'inventaire du {{inventaire.date}}'" ui-sref="home.inventaire.recap({id:inventaire.id})"><span class="fa fa-feed"></span></button>
+                 </div>
+                <div class="form-group" >
+                    <label for="username" class="control-label">Nom</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><fa icon="user"/></span>
+                        <input type="string" name="username" id="username" ng-model="user.username"  placeholder="Nom de l'utilisateur" uib-tooltip="Saisissez le nom de l'utilisateur'" class="form-control" ng-required="true">
+                    </div>
+                    <span class="msg-error" ng-show="frm.username.$error.required">La nom de l'utilisateur est obligatoire</span>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">Roles 
+                        
+                        <div class="btn-group" uib-dropdown ng-show="roles.length>0">
+                            <button id="single-button" type="button" class="btn btn-primary" uib-dropdown-toggle  faa="shake">
+                                <fa icon="plus"/>
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                <li role="menuitem" ng-repeat="role in roles track by $index" ><a ng-click="addRole(role)" ng-bind="role.name"></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <table class="table">
+                        <thead><tr><th>&nbsp;</th><th>&nbsp;</th></tr></thead>
+                        <tbody>
+                            <tr ng-repeat="role in user.roles track by $index">
+                                <td ng-bind="role.name"></td>
+                                <td><button type="button" class="btn btn-danger" uib-tooltip="Enlever ce role" ng-click="removeRole($index,role)" faa="pulse"><fa icon="trash" ></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                 <div class="form-group ">
+                    <button type="submit" class="btn btn-default" uib-tooltip="Enregistrer" ng-disabled ="!frm.$valid"><fa icon="save"/></button>
+                 </div>
+            </form>
+        </div>
+    </div>
+</div>
