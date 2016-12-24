@@ -10,27 +10,18 @@
             <form class="form-horizontal" ng-submit="trySignup()" name="signupForm" novalidate>
                 
                 <div class="form-group">
-                    <label for="name" class="cols-sm-2 control-label">Nom</label>
+                    <label for="username" class="cols-sm-2 control-label">Nom</label>
                     <div class="cols-sm-10">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
-                            <input type="text" class="form-control" name="firstname" id="firstname"  placeholder="Votre nom" ng-model="user.firstname" ng-required="true" ng-minlength="6"/>
+                            <input type="text" class="form-control" name="username" id="username"  placeholder="Votre nom" ng-model="user.username" ng-required="true" ng-minlength="6"/>
                         </div>
                         <span class="msg-error" ng-show="signupForm.firstname.$error.required">Indiquer votre nom.</span>
                         <span class="msg-error" ng-show="signupForm.firstname.$error.minlength">Le nom doit avoir 6 caracteres minimum.</span>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="name" class="cols-sm-2 control-label">Votre prénom</label>
-                    <div class="cols-sm-10">
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
-                            <input type="text" class="form-control" name="lastname" id="lastname"  placeholder="Votre prénom" ng-required="true" ng-model="user.lastname"/>
-                        </div>
-                       <span class="msg-error" ng-show="signupForm.lastname.$error.required ">Indiquer votre prénom.</span>
-                    </div>
-                </div>
+               
 
                 <div class="form-group">
                     <label for="email" class="cols-sm-2 control-label">Votre Email</label>
@@ -50,7 +41,7 @@
                     <div class="cols-sm-10">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
-                            <input type="password" class="form-control" name="password" id="password"  placeholder="Votre mot de passe" ng-required="true" ng-minlength="6" ng-model="password"/>
+                            <input type="password" class="form-control" name="password" id="password"  placeholder="Votre mot de passe" ng-required="true" ng-minlength="6" ng-model="user.password"/>
                         </div>
                         <span class="msg-error" ng-show="signupForm.password.$error.required">Indiquer votre mot de passe.</span>
                          <span class="msg-error" ng-show="signupForm.password.$error.minlength">Le nom doit avoir 6 caracteres minimum.</span>

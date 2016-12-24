@@ -1,0 +1,41 @@
+<div class="container">
+    <div class="row main">
+        <div class="panel-heading">
+            <div class="panel-title text-center">
+                <h1 class="title">Edition du Role<p ng-bind="role.name | titleCase"></p> </h1>
+                <h4>{{role.id}}</h4>
+                <hr />
+            </div>
+        </div> 
+
+         <div class="col-md-12">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                         <th>Name</th>
+                        <th>Permissions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="model in models track by $index"> 
+                        <td ng-bind="model.id"></td>
+                        <td ng-bind="model.name"></td>
+                        <td>
+                            <ng-permission ng-model="model" role="role" permissions="perms[model.id]"></ng-permission>
+                            {{perms[model.id]}}
+                            <!-- <div class="btn-group">
+                                <label class="btn btn-success" ng-model="radioModel" uib-btn-checkbox uib-tooltip="{{role.name | titleCase}} peut Créer un {{model.name}}"><fa icon="plus"/></label>
+                                <label class="btn btn-success" ng-model="radioModel" uib-btn-checkbox uib-tooltip="{{role.name | titleCase}} peut Voir un {{model.name}}"><fa icon="eye"/></label>
+                                <label class="btn btn-success" ng-model="radioModel" uib-btn-checkbox uib-tooltip="{{role.name | titleCase}} peut Créer un {{model.name}}"><fa icon="pencil"/></label>
+                                <label class="btn btn-success" ng-model="radioModel" uib-btn-checkbox uib-tooltip="{{role.name | titleCase}} peut Supprimer un {{model.name}}" ng-click="toggle(model,'delete')"><fa icon="trash"/></label>
+                            </div>-->
+                        </td>
+                     
+                    </tr>
+                </tbody>
+            </table>
+           
+        </div>
+    </div>
+</div>

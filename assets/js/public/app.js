@@ -139,6 +139,7 @@ angular
 
     .state('home.administration',{
         url:'admin',
+        abstract:true,
         templateUrl:'templates/administration.html',
         access: {
             restricted: true,
@@ -208,19 +209,49 @@ angular
         templateUrl:'templates/admin/role.edit.html',
         controller:'AdminRolesEditController',
         resolve:{
-            role:['sailsResource','$q', function(sailsResource,$q){
+            role:['sailsResource','$stateParams','$q','toastr', function(sailsResource,$stateParams,$q,toastr){
                 var d=$q.defer();
                 var Role = sailsResource('role',{
-                    get:{method:'GET',url:'/role/:id?populate=users,permissions'}
+                    get:{method:'GET',url:'/role/:id'}
                 })
                 Role.get({id:$stateParams.id},
                     function(role){
+                        toastr.success('Retrieve role');
                         d.resolve(role);
                     },function(err){
+                        toastr.error(err);
                         d.reject(undefined);
                     });
                 return d.promise
-            }]
+            }],
+            permissions:['sailsResource','$stateParams','$q','toastr','role', function(sailsResource,$stateParams,$q,toastr,role){
+                var d=$q.defer();
+                var Permission = sailsResource('permission',{
+                    query:{method:'GET',url:'/permission?role=:roleid',isArray:true}
+                },{
+                    verbose:true
+                });
+                Permission.query({roleid:role.id}, function(permissions){
+                    toastr.success('Retrieve permissions');
+                    d.resolve(permissions);
+                },function(err){
+                    toastr.error(err);
+                    d.reject(undefined);
+                });
+                return d.promise;
+            }],
+            models:['sailsResource','$stateParams','$q','toastr', function(sailsResource,$stateParams,$q,toastr){
+                var d=$q.defer();
+                var Model = sailsResource('model');
+                Model.query(function(models){
+                    toastr.success('Retrieve models');
+                    d.resolve(models);
+                },function(err){
+                    toastr.error(err);
+                    d.reject(undefined);
+                });
+                return d.promise;
+            }],
         },
          access: {
             restricted: true,
@@ -268,7 +299,12 @@ angular
 
 }])
 
-.controller('SignupController',['$scope','AuthService','user','$state',function($scope,$auth,user,$state){
+.controller('SignupController',['$scope','AuthService','user','$state','toastr',function($scope,$auth,user,$state,toastr){
+    user.username="azerty";
+    user.email="jc.ambert@live.fr";
+    user.password="123456";
+    $scope.pw2="123456";
+
     $scope.user = user;
     $scope.trySignup = function(){
         $auth.register($scope.user).then(
@@ -278,10 +314,14 @@ angular
             },
             function(err){
                 console.dir(err);
-                if(angular.isDefined( err.invalidAttributes.email))
-                    toastr.error('Cet email existe déja!!');
-                else
-                    toastr.error(err);
+                try{
+                    if(angular.isDefined( err.invalidAttributes.email))
+                        toastr.error('Cet email existe déja!!');
+                    else
+                        toastr.error(err);
+                }catch(e){
+                    toastr.error(err.data.error);
+                }
             }
         );
 
@@ -625,7 +665,7 @@ angular
 
 .controller('AdminRolesListController',['$scope', 'sailsResource','$localStorage','$uibModal','toastr', function($scope,sailsResource,$storage,$uibModal,toastr){
     var Role = sailsResource('role',{
-        query:{method:'GET',url:'/role?populate=users,permissions',isArray:true}
+        query:{method:'GET',url:'/role',isArray:true}
     });
     $scope.showNonActive = $storage.roleslist_showNonActive || true;
     function reload(){
@@ -691,6 +731,7 @@ angular
 
 }])
 
+
 .controller('AdminRoleAddModalController',['$scope','role','$uibModalInstance',function($scope,role,$uibModalInstance){
     $scope.role = role;
     $scope.ok = function () {
@@ -702,6 +743,26 @@ angular
     };
 }])
 
+.controller('AdminRolesEditController',['$scope','role','permissions','models',function($scope,role,permissions,models){
+
+    $scope.role=role;
+    $scope.permissions=permissions;
+    $scope.models=models;
+
+    $scope.perms={};
+    console.dir($scope.permissions);
+    _.forEach(models,function(model){
+        $scope.perms[model.id]=permissionFormModel(model);
+    })
+    
+    
+
+     function permissionFormModel (model){
+        var result = _.map( _.filter($scope.permissions,function(perm){return perm.model == model.id && perm.role == role.id;}) ,'action');
+        result= result==undefined?[]:result;
+        return result;
+    }
+}])
 
 .controller('AdminUsersListController',['$scope', 'sailsResource','$localStorage','$uibModal','toastr', function($scope,sailsResource,$storage,$uibModal,toastr){
     var User = sailsResource('user',{
@@ -716,8 +777,48 @@ angular
             toastr.error(err);
         }
     );
-}])
 
+    $scope.addNew = function(){
+        var modalInstance = $uibModal.open({
+            animation: true,
+            ariaLabelledBy: 'modal-title',
+            ariaDescribedBy: 'modal-body',
+            templateUrl: 'admin.user.add.html',
+            controller: 'AdminUserAddModalController',
+            
+            size: 'lg',
+            resolve: {
+                user: function () {
+                    return new User();
+                }
+            }
+        });
+
+        modalInstance.result.then(function (user) {
+            user.model = 2;
+            user.$save(
+                function(r){
+                    $scope.items.push(r);
+                    toastr.success('Utilisateur '+r.username +' ajouter');
+                },function(err){
+                    toastr.error(err);
+                });
+
+        }, function () {
+            //$log.info('Modal dismissed at: ' + new Date());
+        });
+    }
+}])
+.controller('AdminUserAddModalController',['$scope','user','$uibModalInstance',function($scope,user,$uibModalInstance){
+    $scope.user = user;
+    $scope.ok = function () {
+        $uibModalInstance.close($scope.user);
+    };
+
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+}])
 .controller('AdminUsersEditController',['$scope','toastr','user','roles','AuthService',function($scope,toastr,user,roles,$auth){
     if(!angular.isDefined(user)){
         toastr.error('Il n\'y a pas d\'utilisateur avec cet identifiant');
@@ -952,6 +1053,100 @@ angular
 
     }
 }])
+
+.directive('ngPermission',function(){
+    return{
+        restrict:'E',
+        replace:true,
+        template:'<div class="btn-group">\
+                        <label class="btn" ng-class="{\'btn-success\':perms.create,\'btn-danger\':!perms.create}" ng-model="perms.create" uib-btn-checkbox uib-tooltip="{{role.name | titleCase}} peut Créer un {{model.name}}"><fa icon="plus"/></label>\
+                        <label class="btn" ng-class="{\'btn-success\':perms.read,\'btn-danger\':!perms.read}" ng-model="perms.read" uib-btn-checkbox uib-tooltip="{{role.name | titleCase}} peut Voir un {{model.name}}"><fa icon="eye"/></label>\
+                        <label class="btn" ng-class="{\'btn-success\':perms.update,\'btn-danger\':!perms.update}" ng-model="perms.update" uib-btn-checkbox uib-tooltip="{{role.name | titleCase}} peut Modifier un {{model.name}}"><fa icon="pencil"/></label>\
+                        <label class="btn" ng-class="{\'btn-success\':perms.delete,\'btn-danger\':!perms.delete}" ng-model="perms.delete" uib-btn-checkbox uib-tooltip="{{role.name | titleCase}} peut Supprimer un {{model.name}}"><fa icon="trash"/></label>\
+                    </div>',
+        //require:'ngModel',
+        scope:{
+            ngModel:'=',
+            role:'=',
+            permissions:'='
+
+        },
+        controller:['$scope','toastr','sailsResource',function($scope,toastr,sailsResource){
+            var Permission = sailsResource('permission',{
+                deleteAll:{method:'DELETE',url: '/permission?model=:modelid&role=:roleid'}
+                },
+                 {verbose:true});
+            $scope.perms={create:false,read:false,update:false,delete:false};
+            console.dir($scope.role);
+            console.dir( $scope.permissions);
+            
+            _.forEach($scope.permissions,function(perm){
+
+                $scope.perms[perm]=true;
+            });
+
+            $scope.$watchCollection('perms',function(newVal,oldVal){
+                //toastr.success('perms changed');
+                //console.dir(newVal);
+                if(newVal != oldVal)
+                    updatePermission(newVal);
+            })
+
+            function updatePermission (newPerms){
+                var tmp=[];
+                
+                var dbPerms=Permission.query({model:$scope.ngModel.id,role:$scope.role.id},
+                    function(dbPerms){
+                        console.dir(dbPerms);
+                        _.forEach(newPerms,function(perm,key){
+                            var dbPerm = _.find(dbPerms,function(p){return p.action ==key;});
+
+                            if(perm && angular.isDefined(dbPerm) ){
+                                //do nothing
+                                tmp.push(key);
+                            }else if(!perm && angular.isDefined(dbPerm)){
+                                dbPerm.$delete(function(){
+                                    toastr.success('Suppression de'+dbPerm.action+ ' du role '+$scope.role.name);
+                                });
+                            }else if(perm && !angular.isDefined(dbPerm)){
+                                dbPerm=new Permission();
+                                dbPerm.role = $scope.role.id;
+                                dbPerm.model = $scope.ngModel.id;
+                                dbPerm.action = key;
+                                dbPerm.relation = 'role';
+                                dbPerm.$save(function(){
+                                    toastr.success('Ajout de '+dbPerm.action+ ' au role '+$scope.role.name);
+                                    tmp.push(key);
+                                },function(err){
+                                    toastr.error(err);
+                                })
+                            }else if(!perm && !angular.isDefined(dbPerm)){
+                                //do nothing
+                            }
+                        })
+                        $scope.permissions=tmp;
+                    },function(){
+
+                    });
+                
+            }
+        }],
+        link:function($scope,$element,attrs){
+            
+          /*  _.forEach($scope.perms,function(value,perm){
+                //console.log(perm);
+                var result= _.find($scope.permissions,function(permission){
+                   
+                    return permission.model == $scope.ngModel.id && permission.role == $scope.role.id && permission.action==perm;
+                });
+               // console.log(result);
+                $scope.perms[ perm]= (result != undefined);
+            });*/
+         //   console.dir($scope.perms);
+
+        }
+    }
+})
 /* bootstrap Toggle */
 .directive('uibToggle',function(){
     return{
@@ -1022,7 +1217,12 @@ angular
     };
 })
   .service('AuthService',['$q','$http', '$rootScope','sailsResource',function($q,$http,$rootScope,sailsResource){
-        var User = sailsResource('user',{});
+        var User = sailsResource('user',
+            {
+                'register':{method:'POST',url:'/register'},
+            },{
+                verbose:true
+        });
 
         
         // return available functions for use in the controllers
@@ -1127,7 +1327,8 @@ angular
 
         function register(user) {
             var d=$q.defer();
-            user.$save(
+            console.dir(user);
+            $http.post('/register',{username:user.username,email:user.email,password:user.password}).then(
                 function(user){
                     d.resolve();
                 },
@@ -1150,6 +1351,14 @@ angular
         }
   }])
 
+  .filter('titleCase', function () {
+        return function (input) {
+            input = input || '';
+            return input.replace(/\w\S*/g, function (txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
+        };
+    })
   .filter('startFrom',function(){
     return function(input,start){
         if (input) {
@@ -1228,6 +1437,21 @@ angular
     $rootScope.logout = function(){
         $auth.logout().then(function(){$state.go('home.accueil')});
     }
+
+
+    console.dir($state.current);
+    if($state.current.abstract)
+        $state.go('home.accueil');
+
+    else
+        $auth.isLoggedIn().then(
+            function(val){
+                if(!val && $state.current.access.restricted  ){
+                    console.log('user not logged and try acces restricted area => redirect');
+                    return $state.go('home.accueil');
+                }
+            }
+        );
     //$state.go('home.signed');
     console.log('Application running toto');
 }])

@@ -12,22 +12,21 @@
             <uib-toggle ng-model="showNonActive" on-change="onChange(value)"> </uib-toggle>
         </div>-->
          <div class="col-md-4 col-offset-4">
-           <button type="button" class="btn btn-default" uib-tooltip="Ajouter un role" ng-click="addNew()"   faa="shake"><i class="fa fa-plus "></i></button>
+           <button type="button" class="btn btn-default" uib-tooltip="Ajouter un utilisateur" ng-click="addNew()"   faa="shake"><i class="fa fa-plus "></i></button>
         </div>
         <div class="col-md-12">
             <table class="table table-hover">
                 <thead>
                     <tr>
                         <th>Nom</th>
+                        <th>Email</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr ng-repeat="item in items track by $index"> 
-                        <td>
-                            
-                            {{item.username}}
-                        </td>
+                        <td ng-bind="item.username"></td>
+                        <td><a href="mailto:{{item.email}}" ng-bind="item.email"></a> </td>
                         <td>
                             <!--<button type="button" class="btn btn-danger" uib-tooltip="Rendre inactif {{item.name}}'" ng-show="item.active" faa="pulse" ng-click="setActiveTo($index,false)"><i class="fa fa-archive "></i></button>-->
                              <button type="button" class="btn btn-primary" uib-tooltip="Editer {{item.username}}"  faa="shake" ui-sref="home.administration.edituser({id:item.id})"><fa icon="pencil"/></button>
@@ -41,22 +40,32 @@
     </div>
 </div>
 
-<script type="text/ng-template" id="admin.role.add.html">
+<script type="text/ng-template" id="admin.user.add.html">
     <div class="modal-header">
-        <h3 class="modal-title" id="modal-title">Ajouter un role</h3>
+        <h3 class="modal-title" id="modal-title">Ajouter un utililsateur</h3>
     </div>
     <form  name="frm" novalidate >
         <div class="modal-body" id="modal-body">
             <div class="form-group" >
-                    <label for="role" class="control-label">Role</label>
-                    <div class="input-group">
-                        <span class="input-group-addon"><i class="fa fa-film" aria-hidden="true"></i></span>
-                        <input type="text" name="role" id="role"  ng-disabled="mode=='modify'" ng-model="role.name" ng-required="true"  placeholder="Nouveau Role" uib-tooltip="Saisissez un nom pour le role"   class="form-control">
-                    </div>
-                    <div class="msg-error" ng-show="noResults">
-                        <span class="msg-error" ng-show="frm.role.$error.required">Nom du role obligatoire</span>
-                    </div>
+                <label for="username" class="control-label">Nom</label>
+                <div class="input-group">
+                    <span class="input-group-addon"><fa icon="user"/></span>
+                    <input type="text" name="username" id="username"  ng-disabled="mode=='modify'" ng-model="user.username" ng-required="true"  placeholder="Nom complet de l'utilisateur'" uib-tooltip="Saisissez un nom pour l'utilisateur'"   class="form-control">
                 </div>
+                <div class="msg-error" ng-show="noResults">
+                    <span class="msg-error" ng-show="frm.username.$error.required">Nom dde l'utilisateur' obligatoire</span>
+                </div>
+            </div>
+            <div class="form-group" >
+                <label for="email" class="control-label">Nom</label>
+                <div class="input-group">
+                    <span class="input-group-addon"><fa icon="user"/></span>
+                    <input type="text" name="username" id="username"  ng-disabled="mode=='modify'" ng-model="user.username" ng-required="true"  placeholder="Nom complet de l'utilisateur'" uib-tooltip="Saisissez un nom pour l'utilisateur'"   class="form-control">
+                </div>
+                <div class="msg-error" ng-show="noResults">
+                    <span class="msg-error" ng-show="frm.username.$error.required">Nom dde l'utilisateur' obligatoire</span>
+                </div>
+            </div>
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" type="button" ng-click="ok(role)" ng-disabled ="!frm.$valid" faa="shake" ><fa icon="check"/></i></button>
