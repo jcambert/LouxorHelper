@@ -64,11 +64,24 @@ module.exports.policies = {
     'RolePolicy',
     'CriteriaPolicy'
   ],
-
+ 
   AuthController: {
     '*': [ 'passport' ]
   },
 
   //permit anybody to create its user
-  UserController: { create: true }
+  UserController: { 
+    create: true ,
+    update:[
+      'basicAuth',
+      'passport',
+      'sessionAuth',
+      'ModelPolicy',
+      'AuditPolicy',
+      'OwnerPolicy',
+      'PermissionPolicy',
+      'RolePolicy',
+      'CriteriaPolicy'
+    ]
+  }
 };

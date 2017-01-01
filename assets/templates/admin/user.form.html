@@ -1,0 +1,67 @@
+
+
+<div class="modal-header">
+        <h3 class="modal-title" id="modal-title" ng-bind="title"></h3>
+        <h4 ng-if="mode=='modify'" ng-bind="user.username"></h4>
+    </div>
+   
+    <div class="modal-body" id="modal-body" >
+        <form class="form-horizontal"  name="frm" novalidate>
+                
+            <div class="form-group">
+                <label for="username" class="cols-sm-2 control-label">Nom</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
+                        <input type="text" class="form-control" name="username" id="username" ng-disabled="mode=='modify'" placeholder="Votre nom" ng-model="user.username" ng-required="true" ng-minlength="6"/>
+                    </div>
+                    <span class="msg-error" ng-show="frm.firstname.$error.required">Indiquer votre nom.</span>
+                    <span class="msg-error" ng-show="frm.firstname.$error.minlength">Le nom doit avoir 6 caracteres minimum.</span>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label for="email" class="cols-sm-2 control-label">Votre Email</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-envelope fa" aria-hidden="true"></i></span>
+                        <input type="email" validate-email class="form-control" name="email" id="email" ng-disabled="mode=='modify'"  placeholder="Votre email" ng-required="true" ng-model="user.email"/>
+                    </div>
+                    <span class="msg-error" ng-show="frm.email.$error.required">Indiquer votre email.</span>
+                    <span class="msg-error" ng-show="frm.email.$error.email">Email mal formé</span>
+                </div>
+            </div>
+
+
+            <div class="form-group" ng-if="mode!='add'">
+                <label for="password" class="cols-sm-2 control-label">Mot de passe</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                        <input type="password" class="form-control" name="password" id="password"  placeholder="Votre mot de passe" ng-required="true" ng-minlength="8" ng-model="user.password"/>
+                    </div>
+                    <span class="msg-error" ng-show="frm.password.$error.required">Indiquer votre mot de passe.</span>
+                        <span class="msg-error" ng-show="frm.password.$error.minlength">Le nom doit avoir 8 caracteres minimum.</span>
+                </div>
+            </div>
+
+            <div class="form-group" ng-if="mode!='add'">
+                <label for="confirm" class="cols-sm-2 control-label">Confirmer le mot de passe</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                        <input type="password" class="form-control" name="pw2" id="pw2"  placeholder="Confirmer le mot de passe"  ng-model="pw2" pw-check="password"/>
+                        
+                    </div>
+                    <span class="msg-error" ng-show="frm.pw2.$error.pwmatch"> Les mots de passe ne correspondent pas</span>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="ok(role)" ng-disabled ="!frm.$valid" faa="shake" ><fa icon="check"/></i></button>
+        <button class="btn btn-warning" type="button" ng-click="cancel()" faa="pulse"><i class="fa fa-sign-out"></i></button>
+    </div>

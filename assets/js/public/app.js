@@ -1,6 +1,6 @@
 angular
 .module('inventaireatf',['ui.router', 'ngAnimate', 'toastr','angularMoment','sailsResource','ui.bootstrap','ngStorage'])
-.config(['$stateProvider','$urlRouterProvider','$sceDelegateProvider','sailsResourceProvider',function($stateProvider,$urlRouterProvider,$sceDelegateProvider,sailsResourceProvider){
+.config(['$stateProvider','$urlRouterProvider','$sceDelegateProvider','sailsResourceProvider','$httpProvider',function($stateProvider,$urlRouterProvider,$sceDelegateProvider,sailsResourceProvider,$httpProvider){
      // We must whitelist the JSONP endpoint that we are using to show that we trust it
   /*$sceDelegateProvider.resourceUrlWhitelist([
     'self',
@@ -10,6 +10,7 @@ angular
   /*sailsResourceProvider.configuration={
       socket: io.socket
 };*/
+    $httpProvider.defaults.withCredentials = true;
     $stateProvider
     .state('home',{
         url:'/',
@@ -44,7 +45,7 @@ angular
         },
         controller:['$scope','isAdmin',function($scope,isAdmin){
             $scope.isAdmin = isAdmin;
-            console.log('HomeSignedController isAdmin:'+isAdmin);
+             
         }],
         access: {restricted: true}
     })
@@ -283,9 +284,65 @@ angular
         //return _.find(_.map($rootScope.roles,name),function(role){return role=="admin"});
     }
 }])*/
+.controller('navController',[ '$scope','$rootScope','$uibModal',function($scope,$rootScope, $uibModal){
+
+    $scope.changePassword = function(){
+        var modalInstance = $uibModal.open({
+            animation: true,
+            ariaLabelledBy: 'modal-title',
+            ariaDescribedBy: 'modal-body',
+            templateUrl: 'templates/admin/user.form.html',
+            controller: 'AdminUserModalController',
+            
+            size: 'lg',
+            resolve: {
+                user: function () {
+                    var user= $rootScope.user;
+
+                    return user;
+                },
+                mode:function(){
+                    return 'modify';
+                },
+                title:function(){
+                    return 'Modifier'
+                }
+            }
+        });
+
+        modalInstance.result.then(function (user) {
+          
+            user.$save(
+                function(r){
+                    console.dir(r);
+                    if(r.code == 'E_VALIDATION' && r.status==400){
+                        var msg="";
+                        var keys = _.keys(r.invalidAttributes);
+                        _.forEach(keys,function(key){
+                            console.log(key);
+                            _.forEach(r.invalidAttributes[key],function(attr,key){msg=msg+attr.message+"\n";});
+                        })
+                         if(msg.length==0 )
+                            msg=r.reason;
+                        toastr.error(msg);
+                    }else{
+                   
+                        $scope.items.push(r);
+                        toastr.success('Utilisateur '+r.username +' modifié');
+                    }
+                },function(err){
+                    toastr.error(err);
+                });
+
+        }, function () {
+            //$log.info('Modal dismissed at: ' + new Date());
+        });
+    };
+}])
 .controller('MainController',['$rootScope','$scope','AuthService','toastr','$state','isLogged',function($rootScope,$scope,$auth,toastr,$state,isLogged){
 
-    if(isLogged && $rootScope.user){
+  
+  /*  if(isLogged && $rootScope.user){
         $auth.getRoles($rootScope.user.id).then(
             function(roles){
                 $rootScope.roles = roles;
@@ -294,7 +351,7 @@ angular
                 $rootScope.roles = {}
             }
         )
-    }
+    }*/
 
 
 }])
@@ -330,7 +387,7 @@ angular
 }])
 
 .controller('SigninController',['$scope','AuthService','toastr','$state',function($scope,$auth,toastr,$state){
-    $scope.user ={email:'admin@example.com',password:'admin1234'};
+    $scope.user ={email:'jc.ambert@free.fr',password:'12345678'};
      $scope.trySignin = function(){
         $auth.login($scope.user.email,$scope.user.password).then(
             function(user){
@@ -783,13 +840,23 @@ angular
             animation: true,
             ariaLabelledBy: 'modal-title',
             ariaDescribedBy: 'modal-body',
-            templateUrl: 'admin.user.add.html',
-            controller: 'AdminUserAddModalController',
+            templateUrl: 'templates/admin/user.form.html',
+            controller: 'AdminUserModalController',
             
             size: 'lg',
             resolve: {
                 user: function () {
-                    return new User();
+                    var user= new User();
+                    user.password = "12345678";
+                    user.username="maryline";
+                    user.email="maryline.ambert@free.fr";
+                    return user;
+                },
+                mode:function(){
+                    return 'add';
+                },
+                title:function(){
+                    return 'Ajouter un utilisateur'
                 }
             }
         });
@@ -798,8 +865,22 @@ angular
             user.model = 2;
             user.$save(
                 function(r){
-                    $scope.items.push(r);
-                    toastr.success('Utilisateur '+r.username +' ajouter');
+                    console.dir(r);
+                    if(r.code == 'E_VALIDATION' && r.status==400){
+                        var msg="";
+                        var keys = _.keys(r.invalidAttributes);
+                        _.forEach(keys,function(key){
+                            console.log(key);
+                            _.forEach(r.invalidAttributes[key],function(attr,key){msg=msg+attr.message+"\n";});
+                        })
+                         if(msg.length==0 )
+                            msg=r.reason;
+                        toastr.error(msg);
+                    }else{
+                   
+                        $scope.items.push(r);
+                        toastr.success('Utilisateur '+r.username +' ajouter');
+                    }
                 },function(err){
                     toastr.error(err);
                 });
@@ -807,10 +888,23 @@ angular
         }, function () {
             //$log.info('Modal dismissed at: ' + new Date());
         });
+    };
+
+    $scope.delete = function(index){
+        var user = $scope.items[index];
+        user.$delete(
+            function(){
+                $scope.items.splice(index,0);
+                toastr.success(user.username + " est supprime");
+            },function(err){
+                toastr.error(err);
+            });
     }
 }])
-.controller('AdminUserAddModalController',['$scope','user','$uibModalInstance',function($scope,user,$uibModalInstance){
+.controller('AdminUserModalController',['$scope','user','mode','title','$uibModalInstance',function($scope,user,mode,title,$uibModalInstance){
     $scope.user = user;
+    $scope.mode = mode;
+    $scope.title = title;
     $scope.ok = function () {
         $uibModalInstance.close($scope.user);
     };
@@ -1216,6 +1310,25 @@ angular
         }
     };
 })
+
+.directive('validateEmail', function() {
+  var EMAIL_REGEXP = /^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/;
+
+  return {
+    require: 'ngModel',
+    restrict: 'A',
+    link: function(scope, elm, attrs, ctrl) {
+      // only apply the validator if ngModel is present and Angular has added the email validator
+      if (ctrl && ctrl.$validators.email) {
+
+        // this will overwrite the default Angular email validator
+        ctrl.$validators.email = function(modelValue) {
+          return ctrl.$isEmpty(modelValue) || EMAIL_REGEXP.test(modelValue);
+        };
+      }
+    }
+  };
+})
   .service('AuthService',['$q','$http', '$rootScope','sailsResource',function($q,$http,$rootScope,sailsResource){
         var User = sailsResource('user',
             {
@@ -1289,9 +1402,9 @@ angular
                 function(user){
                     $rootScope.user=user.data;
                     $rootScope.isLogged  = true;
-                    getRoles(user.id).then(
+                    getRoles($rootScope.user.id).then(
                         function(roles){
-                            $rootScope.roles = role;
+                            $rootScope.roles = roles;
                             d.resolve(user.data);
                         },
                         function(){
@@ -1388,6 +1501,7 @@ angular
   .run(['$rootScope','$http','toastr','$state','$location','sailsResource','AuthService','$interval', function($rootScope,$http,toastr,$state,$location,$sailsResource,$auth,$interval){
      
      $rootScope.socketState='disconnected';
+     
 
     io.socket.on('connect',function(){
         toastr.success('Vous etes connecté au serveur !!');

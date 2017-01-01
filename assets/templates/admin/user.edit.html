@@ -12,10 +12,7 @@
                 <i class="fa fa-spinner fa-spin fa-5x"></i>
             </span>
             <form ng-submit="saisirInventaire()" name="frm" novalidate ng-hide="loading">
-                <div class="form-group ">
-                    <button type="button" class="btn btn-default" uib-tooltip="Détail de l'inventaire du {{inventaire.date}}'" ui-sref="home.inventaire.detail({id:inventaire.id})"><span class="fa fa-list"></span></button>
-                    <button type="button" class="btn btn-default" uib-tooltip="Recap de l'inventaire du {{inventaire.date}}'" ui-sref="home.inventaire.recap({id:inventaire.id})"><span class="fa fa-feed"></span></button>
-                 </div>
+               
                 <div class="form-group" >
                     <label for="username" class="control-label">Nom</label>
                     <div class="input-group">
