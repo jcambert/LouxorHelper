@@ -51,19 +51,55 @@ angular
     })
     .state('home.inventaire',{
         url:'inventaire',
-        templateUrl:'templates/inventaire.html',
+        templateUrl:'templates/inventaire/inventaire.html',
         abstract:true,
         access: {restricted: true}
     })
+    .state('home.inventaire.upgrade',{
+        url:'/upgrade',
+        template:'<div ><div ng-bind="status"></div><br><div ng-bind="article.codart"></div></div>',
+       /* resolve:{
+            articles:['sailsResource' ,function(sailsResource){
+                return sailsResource('ArticleInventaire').query();
+            }]
+        },*/
+        controller:['$scope','sailsResource',function($scope,sailsResource){
+            $scope.status="Traitement";
+            var counter=0;
+            sailsResource('ArticleInventaire').query({limit:100000}, function(articles){
+                 console.dir(articles);
+                _.forEach( articles,function(article){
+                    if(! angular.isDefined(article.of)){
+                        console.log(++counter, article.codart);
+                        $scope.article=article;
+                        article.of='';
+                        article.$save(
+                            function(a){
+                                console.log(a.codart+ ' saved');
+                            },
+                            function(err){
+                                console.error(err);
+                            }
+                        );
+                        $scope.status= $scope.status+'.';
+                    }
+                });
+                $scope.status="Fini";
+                delete $scope.article;
+            });
+           
+        }],
+         access: {restricted: true}
+    })
     .state('home.inventaire.list',{
         url:'/list',
-        templateUrl:'templates/inventaire.list.html',
+        templateUrl:'templates/inventaire/inventaire.list.html',
         controller:'InventaireListCtrl',
          access: {restricted: true}
     })
      .state('home.inventaire.new',{
         url:'/new',
-        templateUrl:'templates/inventaire.new.html',
+        templateUrl:'templates/inventaire/inventaire.new.html',
         controller:'InventaireNewCtrl',
         resolve:{
             lastDate : ['$http',function($http){
@@ -103,7 +139,7 @@ angular
 
     .state('home.inventaire.saisie',{
         url:'/saisie/:id',
-        templateUrl:'templates/inventaire.saisie.html',
+        templateUrl:'templates/inventaire/inventaire.saisie.html',
         controller:'InventaireSaisieCtrl',
         resolve:{
             mode:function(){return 'create';}
@@ -112,7 +148,7 @@ angular
     })
      .state('home.inventaire.modifier',{
         url:'/modifier/:id/:aid',
-        templateUrl:'templates/inventaire.saisie.html',
+        templateUrl:'templates/inventaire/inventaire.saisie.html',
         controller:'InventaireSaisieCtrl',
         resolve:{
             mode:function(){return 'modify';}
@@ -121,13 +157,13 @@ angular
     })
     .state('home.inventaire.detail',{
         url:'/detail/:id/:aid',
-        templateUrl:'templates/inventaire.detail.html',
+        templateUrl:'templates/inventaire/inventaire.detail.html',
         controller:'InventaireDetailCtrl',
          access: {restricted: true}
     })
     .state('home.inventaire.recap',{
         url:'/recap/:id',
-        templateUrl:'templates/inventaire.recap.html',
+        templateUrl:'templates/inventaire/inventaire.recap.html',
         controller:'InventaireRecapCtrl',
          access: {restricted: true}
     })
@@ -387,7 +423,7 @@ angular
 }])
 
 .controller('SigninController',['$scope','AuthService','toastr','$state',function($scope,$auth,toastr,$state){
-    $scope.user ={email:'jc.ambert@free.fr',password:'12345678'};
+    $scope.user ={email:'admin@example.com',password:'admin1234'};
      $scope.trySignin = function(){
         $auth.login($scope.user.email,$scope.user.password).then(
             function(user){
@@ -522,6 +558,7 @@ angular
 .controller('InventaireSaisieCtrl',['$scope','sailsResource','$state','$stateParams','toastr','$http','mode',function($scope,$sailsResource,$state,$stateParams,toastr,$http,mode){
     $scope.loading = true;
     $scope.mode = mode;
+    var currentPage = 1;
     if(!angular.isDefined($stateParams.id)){
         toastr.error('Veuillez fournir un idenfiant pour la saisie d\'un inventaire');
         $state.go('home.inventaire.list');
@@ -557,6 +594,7 @@ angular
     function init(){
         if(mode == 'create'){
                 $scope.article = new ArticleInventaire();
+                $scope.article.page = currentPage;
                 $scope.article.inventaire = $scope.inventaire; 
                 $scope.codartFocus=true;
                 $scope.loading=false;
@@ -583,6 +621,7 @@ angular
         $scope.article.$save(
             function(item){
                 toastr.success($scope.article.codart + ' ajouter à l\'inventaire');
+                currentPage = $scope.article.page;
                 init();
             },
             function(err){
@@ -593,20 +632,21 @@ angular
     }
    
     $scope.getArticles = function(val) {
-       
+       // if(val.length<5)return;
         $scope.url='//localhost:8080/louxor/inventaireliste.php';
         var params = {
                 date:$scope.inventaire.date,
-                ref:val
+                ref:val.toUpperCase(),
+                limit:10
             };
         return $http.get($scope.url, {
                 params: params
             }).then(function(response){
-                console.dir(response);
+               // console.dir(response);
                 var result= response.data.results.map(function(item){
                     return item.codart;
                 });
-                console.dir(result);
+                //console.dir(result);
                 return result;
             });
     };
@@ -624,11 +664,11 @@ angular
     
 
     var Inventaire = $sailsResource('inventaire',{
-
+        //detail :{method:'GET',url:'/articleinventaire/?inventaire=:id&articles&limit=200000',isArray:true}
     });
 
     var ArticleInventaire = $sailsResource('ArticleInventaire',{
-
+        query:{method:'GET',url:'/articleinventaire/?inventaire=:id&limit=20000',isArray:true}
     });
 
     /* SEARCH AND PAGER */
@@ -643,16 +683,33 @@ angular
 
 
      Inventaire.get({id:$stateParams.id},
-        function(item){
-            console.dir(item);
-            $scope.inventaire = item;
-             $scope.loading=false;
-             $scope.totalItems = $scope.inventaire.articles.length;
-             $scope.noOfPages = Math.ceil($scope.totalItems / $scope.$storage.pager_itemsPerPage);
+        function(inventaire){
+            console.dir(inventaire);
+             $scope.inventaire = inventaire;
+
+             ArticleInventaire.query({id:inventaire.id},
+                function(articles){
+                    $scope.articles = articles;
+                    $scope.totalItems = $scope.articles.length;
+                    $scope.noOfPages = Math.ceil($scope.totalItems / $scope.$storage.pager_itemsPerPage);
+                    $scope.loading = false;
+                }
+                ,function(err){
+                    console.dir(err);
+                    toastr.error('Un erreur est survenue. Regarder la console' );
+                    $state.go('home.inventaire.list');
+                     $scope.loading = false;
+                }
+             )
+
+            // $scope.loading=false;
+            
         },
         function(err){
+            console.dir(err);
             toastr.error('L\inventaire avec l\id '+$stateParams.id + ' n\'existe pas !!' );
             $state.go('home.inventaire.list');
+             $scope.loading = false;
 
         }
     );

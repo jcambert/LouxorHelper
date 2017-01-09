@@ -83,7 +83,8 @@ module.exports.routes = {
   'GET /inventaire/inject/:id/end' : 'InventaireController.end',
   'GET /inventaire/inject/:id/error' :'InventaireController.error',
   'GET /inventaire/inject/:id/clear' :'InventaireController.clearstatus',
-  'GET /inventaire/detail':'InventaireController.detail',
+  'GET /inventaire/toinject':'InventaireController.toinject',
+  'GET /inventaire/dateforid/:id':'InventaireController,dateforid',
   'GET /inventaire/list':'InventaireController.list',
   'GET /articleinventaire/byref/:reference':'ArticleInventaireController.byreferences',
   

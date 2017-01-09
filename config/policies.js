@@ -83,5 +83,15 @@ module.exports.policies = {
       'RolePolicy',
       'CriteriaPolicy'
     ]
+  },
+  InventaireController:{
+    'dateforid': 'publicPolicy',
+    'toinject':'publicPolicy',
+    'list':'publicPolicy',
+    'wantstart':'publicPolicy',
+    'start':'publicPolicy',
+    'end':'publicPolicy',
+    'error':'publicPolicy',
+    'clearstatus':'publicPolicy'
   }
 };

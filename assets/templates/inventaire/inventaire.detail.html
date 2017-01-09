@@ -30,13 +30,17 @@
                                 <tr>
                                     <th>Article</th>
                                     <th>Quantite</th>
+                                    <th>Of</th>
+                                    <th>operation</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="article in filtered = inventaire.articles | filter:search | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage  track by $index">
-                                    <td>{{article.codart}}</td>
-                                    <td>{{article.qty}}</td>
+                                <tr ng-repeat="article in filtered = articles | filter:search | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage  track by $index">
+                                    <td ng-bind="article.codart"></td>
+                                    <td ng-bind="article.qty"></td>
+                                    <td ng-bind="article.of"></td>
+                                    <td ng-bind="article.op"></td>
                                     <td>
                                         <div class="btn-group" role="group" aria-label="...">
                                             <button type="button" class="btn btn-default" uib-tooltip="Modifier {{article.codart}} de l'inventaire du {{inventaire.date}}'" ui-sref="home.inventaire.modifier({id:inventaire.id,aid:article.id})"><span class="fa fa-pencil"></span></button>
@@ -50,7 +54,7 @@
                     </div>
                 </div>
                 <div class="col-md-12">
-                    <pager table-model="inventaire.articles" filtered="filtered" search="search" items-per-Page="itemsPerPage" current-page="currentPage" total-items="filterItemsCount"></pager>
+                    <pager table-model="articles" filtered="filtered" search="search" items-per-Page="itemsPerPage" current-page="currentPage" total-items="filterItemsCount"></pager>
                 </div>
                 
             </form>

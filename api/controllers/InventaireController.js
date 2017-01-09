@@ -26,7 +26,7 @@ var updateStatus = function(req,res,status,error){
     });
 };
 module.exports = {
-	detail:function(req,res){
+	toinject:function(req,res){
         var params={};
         if(req.query.id)
             params.id=req.query.id;
@@ -38,7 +38,7 @@ module.exports = {
             if(inventaire == undefined){
                 return res.json({inventaire:{articles:[]}});
             }else{
-                ArticleInventaire.find({inventaire:inventaire.id}).groupBy('codart').sum('qty').sort('codart ASC').exec(function(err,articles){
+                ArticleInventaire.find({inventaire:inventaire.id,of:''}).groupBy('codart').sum('qty').sort('codart ASC').exec(function(err,articles){
                     if(err)return res.send(404,err);
                     _.forEach(articles,function(article){
                         article.date=inventaire.date;
@@ -50,6 +50,16 @@ module.exports = {
             
         });
 
+    },
+    dateforid:function(req,res){
+        Inventaire.findOne({id:req.params.id}).exec(function(err,inventaire){
+            if(err)return res.send(404,err);
+            if(inventaire == undefined){
+                return res.json({inventaire:{articles:[]}});
+            }else{
+                return res.json({inventaire:{date:inventaire.date}});
+            }
+        })
     },
     list:function(req,res){
          Inventaire.find({solde:false}).exec(function(err,items){

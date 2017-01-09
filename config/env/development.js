@@ -18,8 +18,8 @@ module.exports = {
    ***************************************************************************/
 
    models: {
-    //connection: 'someMongodbServer'
-    connection : 'localDiskDb'
+    connection: 'mongodbServer'
+    //connection : 'localDiskDb'
    }
 
 };

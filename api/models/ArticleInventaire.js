@@ -26,6 +26,16 @@ module.exports = {
     },
     inventaire:{
       model:'inventaire'
+    },
+    of:{
+      type:'string',
+      defaultsTo:''
+    },
+    op:{
+      type:'integer'
+    },
+    page:{
+      type:'integer'
     }
     
   }
